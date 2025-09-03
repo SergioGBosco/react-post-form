@@ -2,15 +2,23 @@ import axios from "axios"
 import { Alert } from "bootstrap"
 import { useState } from "react"
 function App() {
-
+  const [newPost, SetNewPost] = useState({
+    author: "",
+    title: "",
+    body: "",
+    public: "",
+  })
   // axios.get("https://67c5b4f3351c081993fb1ab6.mockapi.io/api/posts").then(resp => {
   //   console.log(resp.data)
   // })
 
-
   //creo la funzione che mi permette di inviare i dati dei campi imput
   const handleChange = (e) => {
     console.log(e.target.value)
+    SetNewPost((newPost) => ({
+      ...newPost,
+      [e.target.name]: e.target.value,
+    }))
   }
 
 
@@ -42,6 +50,7 @@ function App() {
                 className="form-control"
                 id="InputTitle"
                 name="title"
+
                 onChange={handleChange}
               />
 
@@ -53,7 +62,7 @@ function App() {
                 type="text"
                 className="form-control"
                 id="InputText"
-                name="text"
+                name="body"
                 onChange={handleChange}
               />
             </div>
