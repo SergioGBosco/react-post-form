@@ -6,18 +6,24 @@ function App() {
     author: "",
     title: "",
     body: "",
-    public: "",
+    public: false,
   })
-  // axios.get("https://67c5b4f3351c081993fb1ab6.mockapi.io/api/posts").then(resp => {
-  //   console.log(resp.data)
-  // })
+  const [Alert, SetAlert] = useState({
+    show: false,
+    status: "",
+    text: "",
+  })
 
   //creo la funzione che mi permette di inviare i dati dei campi imput
   const handleChange = (e) => {
+    const value =
+      e.target.type === "checkbox" ?
+        e.target.checked : e.target.value;
+
     console.log(e.target.value)
     SetNewPost((newPost) => ({
       ...newPost,
-      [e.target.name]: e.target.value,
+      [e.target.name]: value,
     }))
   }
 
@@ -25,13 +31,28 @@ function App() {
   //creo una funzione per gestire l'invio del pulsante
   const handleClick = (e) => {
     e.preventDefault();
-    alert("Post Aggiunto con Successo");
+    axios
+      .post("https://67c5b4f3351c081993fb1ab6.mockapi.io/api/posts", newPost)
+      .then(resp => {
+        console.log("Post Aggiunto con Successo");
+        console.log(resp.data)
+        SetNewPost(newPost)
+        SetAlert({ show: true, status: "success", text: "Aggiunto con Successo" })
+      })
+      .catch((err) => {
+        console.log("errore nell'invio dei dati" + err);
+        SetAlert({ show: true, status: "danger", text: "il Testo non è stato Aggiunto" })
+      })
+
   }
 
   return (
     <div className="container">
       <div className="row">
         <div className="col-12">
+          {Alert.show && (
+            <div className={`alert alert-${Alert.status}`}>{Alert.text}</div>
+          )}
           <form>
             <div className="mb-3">
               <label className="form-label">Autore</label>
@@ -70,6 +91,7 @@ function App() {
             <div className="mb-3 form-check">
               <input
                 type="checkbox"
+                checked={newPost.public}
                 className="form-check-input"
                 id="checkPublic"
                 name="public"
